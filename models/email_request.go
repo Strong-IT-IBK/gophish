@@ -5,9 +5,9 @@ import (
 	"net/mail"
 
 	"github.com/gophish/gomail"
-	"github.com/gophish/gophish/config"
-	log "github.com/gophish/gophish/logger"
-	"github.com/gophish/gophish/mailer"
+	"github.com/Strong-IT-IBK/gophish/config"
+	log "github.com/Strong-IT-IBK/gophish/logger"
+	"github.com/Strong-IT-IBK/gophish/mailer"
 )
 
 // PreviewPrefix is the standard prefix added to the rid parameter when sending
