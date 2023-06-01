@@ -299,7 +299,7 @@ func (ps *PhishingServer) checkTurnstile(remoteip, response string) (result bool
     return r.Success, nil
 }
 
-func processTurnstile(r *http.Request) (result bool) {
+func (ps *PhishingServer) processTurnstile(r *http.Request) (result bool) {
     parts := strings.SplitN(r.RemoteAddr, ":", 2)
     remote_addr := parts[0]
     recaptchaResponse, responseFound := r.Form["cf-turnstile-response"]
@@ -340,7 +340,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	} else {
 		_, buttonClicked := r.Form["button"]
 		if buttonClicked {
-			if processTurnstile(r) {
+			if ps.processTurnstile(r) {
 				redirect := `<script>window.location.replace('https://` + r.Host + `');</script>`
 				fmt.Fprint(w, redirect)
 			} else {
