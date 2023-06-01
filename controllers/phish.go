@@ -313,7 +313,7 @@ func processTurnstile(r *http.Request) (result bool) {
     return false
 }
 
-func (ps *HttpServer) TurnstileHandler(w http.ResponseWriter, r *http.Request) {
+func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Request) {
 	r, err := setupContext(r)
 	if err != nil {
 		// Log the error if it wasn't something we can safely ignore
@@ -331,9 +331,9 @@ func (ps *HttpServer) TurnstileHandler(w http.ResponseWriter, r *http.Request) {
 		<div class="cf-turnstile" data-sitekey="%s" data-callback="javascriptCallback"></div>
 	<input type="submit" name="button" value="Submit">
 	</form>`
-	message = `<p>%s</p>`
-	pageBottom = `</div></div></body></html>`
-	err := r.ParseForm() 
+	message := `<p>%s</p>`
+	pageBottom := `</div></div></body></html>`
+	err = r.ParseForm() 
 	fmt.Fprint(w, pageTop)
 	if err != nil {
 		log.Error("turnstile form error", err)
