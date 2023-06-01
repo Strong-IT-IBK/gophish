@@ -9,6 +9,9 @@ import (
 	"net/http"
 	"strings"
 	"time"
+	"io/ioutil"
+	"encoding/json"
+	"net/url"
 
 	"github.com/NYTimes/gziphandler"
 	"github.com/gophish/gophish/config"
@@ -52,6 +55,14 @@ type PhishingServer struct {
 	server         *http.Server
 	config         config.PhishServer
 	contactAddress string
+}
+
+// RecaptchaResponse contains captcha challange results information
+type RecaptchaResponse struct {
+    Success     bool      `json:"success"`
+    ChallengeTS time.Time `json:"challenge_ts"`
+    Hostname    string    `json:"hostname"`
+    ErrorCodes  []string  `json:"error-codes"`
 }
 
 // NewPhishingServer returns a new instance of the phishing server with
@@ -116,6 +127,7 @@ func (ps *PhishingServer) registerRoutes() {
 	router.HandleFunc("/{path:.*}/report", ps.ReportHandler)
 	router.HandleFunc("/report", ps.ReportHandler)
 	router.HandleFunc("/{path:.*}", ps.PhishHandler)
+	router.HandleFunc("/verify", ps.TurnstileHandler)
 
 	// Setup GZIP compression
 	gzipWrapper, _ := gziphandler.NewGzipLevelHandler(gzip.BestCompression)
@@ -263,6 +275,86 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	}
 	renderPhishResponse(w, r, ptx, p)
+}
+
+func checkTurnstile(remoteip, response string) (result bool, err error) {
+    resp, err := http.PostForm(ps.config.turnstileServerName,
+        url.Values{"secret": {ps.config.turnstilePrivateKey}, "remoteip": {remoteip}, "response": {response}})
+    if err != nil {
+        log.Error("Post error: %s", err)
+        return false, err
+    }
+    defer resp.Body.Close()
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        log.Error("Read error: could not read body: %s", err)
+        return false, err
+    }
+    r := RecaptchaResponse{}
+    err = json.Unmarshal(body, &r)
+    if err != nil {
+        log.Error("Read error: got invalid JSON: %s", err)
+        return false, err
+    }
+    return r.Success, nil
+}
+
+func processTurnstile(r *http.Request) (result bool) {
+    parts := strings.SplitN(r.RemoteAddr, ":", 2)
+    remote_addr := parts[0]
+    recaptchaResponse, responseFound := r.Form["cf-turnstile-response"]
+    if responseFound {
+        result, err := checkTurnstile(remote_addr, recaptchaResponse[0])
+        if err != nil {
+            log.Error("turnstile server error", err)
+        }
+        return result
+    }
+    return false
+}
+
+func (ps *HttpServer) TurnstileHandler(w http.ResponseWriter, r *http.Request) {
+	r, err := setupContext(r)
+	if err != nil {
+		// Log the error if it wasn't something we can safely ignore
+		if err != ErrInvalidRequest && err != ErrCampaignComplete {
+			log.Error(err)
+		}
+		http.NotFound(w, r)
+		return
+	}
+	w.Header().Set("X-Server", config.ServerName) // Useful for checking if this is a GoPhish server (e.g. for campaign reporting plugins)
+    pageTop := `<!DOCTYPE HTML><html><head>
+<title>Cloudflare</title></head>`
+	form := `<form action="/verify" method="POST">
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+		<div class="cf-turnstile" data-sitekey="%s" data-callback="javascriptCallback"></div>
+	<input type="submit" name="button" value="Submit">
+	</form>`
+	message = `<p>%s</p>`
+	pageBottom = `</div></div></body></html>`
+	err := r.ParseForm() 
+	fmt.Fprint(w, pageTop)
+	if err != nil {
+		log.Error("turnstile form error", err)
+	} else {
+		_, buttonClicked := r.Form["button"]
+		if buttonClicked {
+			if processTurnstile(r) {
+				redirect := `<script>window.location.replace('https://` + r.Host + `');</script>`
+				fmt.Fprint(w, redirect)
+			} else {
+				fmt.Fprint(w, fmt.Sprintf(message, "Please try again."))
+			}
+		}
+	}
+	if ps.config.TurnstilePublicKey {
+		fmt.Fprint(w, fmt.Sprintf(form, ps.config.TurnstilePublicKey))
+		fmt.Fprint(w, pageBottom)
+	} else {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Access denied."))
+	}
 }
 
 // renderPhishResponse handles rendering the correct response to the phishing
