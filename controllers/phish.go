@@ -304,7 +304,7 @@ func processTurnstile(r *http.Request) (result bool) {
     remote_addr := parts[0]
     recaptchaResponse, responseFound := r.Form["cf-turnstile-response"]
     if responseFound {
-        result, err := checkTurnstile(remote_addr, recaptchaResponse[0])
+        result, err := ps.checkTurnstile(remote_addr, recaptchaResponse[0])
         if err != nil {
             log.Error("turnstile server error", err)
         }
