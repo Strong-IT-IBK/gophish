@@ -20,10 +20,13 @@ type AdminServer struct {
 
 // PhishServer represents the Phish server configuration details
 type PhishServer struct {
-	ListenURL string `json:"listen_url"`
-	UseTLS    bool   `json:"use_tls"`
-	CertPath  string `json:"cert_path"`
-	KeyPath   string `json:"key_path"`
+	ListenURL 			string `json:"listen_url"`
+	UseTLS    			bool   `json:"use_tls"`
+	CertPath  			string `json:"cert_path"`
+	KeyPath   			string `json:"key_path"`
+	TurnstileServerName	string `json:"turnstile_server_name"`
+	TurnstilePrivateKey	string `json:"turnstile_private_key"`
+	TurnstilePublicKey	string `json:"turnstile_public_key"`
 }
 
 // Config represents the configuration information.

@@ -277,9 +277,9 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	renderPhishResponse(w, r, ptx, p)
 }
 
-func checkTurnstile(remoteip, response string) (result bool, err error) {
-    resp, err := http.PostForm(ps.config.turnstileServerName,
-        url.Values{"secret": {ps.config.turnstilePrivateKey}, "remoteip": {remoteip}, "response": {response}})
+func (ps *PhishingServer) checkTurnstile(remoteip, response string) (result bool, err error) {
+    resp, err := http.PostForm(ps.config.TurnstileServerName,
+        url.Values{"secret": {ps.config.TurnstilePrivateKey}, "remoteip": {remoteip}, "response": {response}})
     if err != nil {
         log.Error("Post error: %s", err)
         return false, err
