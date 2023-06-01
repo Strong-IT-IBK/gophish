@@ -126,8 +126,8 @@ func (ps *PhishingServer) registerRoutes() {
 	router.HandleFunc("/{path:.*}/track", ps.TrackHandler)
 	router.HandleFunc("/{path:.*}/report", ps.ReportHandler)
 	router.HandleFunc("/report", ps.ReportHandler)
-	router.HandleFunc("/{path:.*}", ps.PhishHandler)
 	router.HandleFunc("/verify", ps.TurnstileHandler)
+	router.HandleFunc("/{path:.*}", ps.PhishHandler)
 
 	// Setup GZIP compression
 	gzipWrapper, _ := gziphandler.NewGzipLevelHandler(gzip.BestCompression)
