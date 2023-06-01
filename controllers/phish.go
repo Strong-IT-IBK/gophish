@@ -348,7 +348,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 			}
 		}
 	}
-	if ps.config.TurnstilePublicKey {
+	if ps.config.TurnstilePublicKey != "" {
 		fmt.Fprint(w, fmt.Sprintf(form, ps.config.TurnstilePublicKey))
 		fmt.Fprint(w, pageBottom)
 	} else {
