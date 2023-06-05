@@ -333,7 +333,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("X-Server", config.ServerName) // Useful for checking if this is a GoPhish server (e.g. for campaign reporting plugins)
     pageTop := `<!DOCTYPE HTML><html><head>
 <title>Cloudflare</title></head>`
-	form := `<form action="/verify?" method="POST">
+	form := `<form action="%s" method="POST">
 	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 		<div class="cf-turnstile" data-sitekey="%s" data-callback="javascriptCallback"></div>
 	<input type="submit" name="button" value="Submit">
@@ -370,7 +370,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		}
 	}
 	if ps.config.TurnstilePublicKey != "" {
-		fmt.Fprint(w, fmt.Sprintf(form, ps.config.TurnstilePublicKey))
+		fmt.Fprint(w, fmt.Sprintf(form, r.URL.Path, ps.config.TurnstilePublicKey))
 		fmt.Fprint(w, pageBottom)
 	} else {
 		w.WriteHeader(http.StatusForbidden)
