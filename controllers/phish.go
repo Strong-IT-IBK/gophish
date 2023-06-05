@@ -351,7 +351,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				token := uuid.NewString()
 				expiresAt := time.Now().Add(24 * time.Hour)
 				TurnstileTokens[token] = TurnstileToken{
-					expiry:   expiresAt
+					expiry:   expiresAt,
 				}
 				// set cookie
 				cookie := http.Cookie{}
