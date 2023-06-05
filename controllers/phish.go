@@ -334,13 +334,19 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("X-Server", config.ServerName) // Useful for checking if this is a GoPhish server (e.g. for campaign reporting plugins)
     pageTop := `<!DOCTYPE HTML><html><head>
 <title>Cloudflare</title>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script></head>`
-	form := `<form action="%s" method="POST">
-		<div class="cf-turnstile" data-sitekey="%s" data-callback="javascriptCallback"></div>
-	<input type="submit" name="button" value="Submit">
-	</form>`
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script></head>`
+	body := `
+	<body><div id="ts-container"></div>
+	<script>window.onloadTurnstileCallback = function () {
+		turnstile.render('#ts-container', {
+			sitekey: '%s',
+			callback: function(token) {
+				console.log(``Challenge Success ${token}``);
+			},
+		});
+	};</script></body>`
 	message := `<p>%s</p>`
-	pageBottom := `</div></div></body></html>`
+	pageBottom := `</html>`
 	err = r.ParseForm() 
 	fmt.Fprint(w, pageTop)
 	if err != nil {
@@ -371,7 +377,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		}
 	}
 	if ps.config.TurnstilePublicKey != "" {
-		fmt.Fprint(w, fmt.Sprintf(form, r.URL.RequestURI(), ps.config.TurnstilePublicKey))
+		fmt.Fprint(w, fmt.Sprintf(body, ps.config.TurnstilePublicKey))
 		fmt.Fprint(w, pageBottom)
 	} else {
 		w.WriteHeader(http.StatusForbidden)
