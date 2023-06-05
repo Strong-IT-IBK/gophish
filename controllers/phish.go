@@ -370,7 +370,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		}
 	}
 	if ps.config.TurnstilePublicKey != "" {
-		fmt.Fprint(w, fmt.Sprintf(form, r.URL.Path, ps.config.TurnstilePublicKey))
+		fmt.Fprint(w, fmt.Sprintf(form, r.URL.RequestURI(), ps.config.TurnstilePublicKey))
 		fmt.Fprint(w, pageBottom)
 	} else {
 		w.WriteHeader(http.StatusForbidden)
