@@ -342,6 +342,16 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 			sitekey: '%s',
 			callback: function(token) {
 				console.log(`+"`Challenge Success ${token}`);"+`
+				fetch("%s", {
+					method: "POST",
+					body: JSON.stringify({
+					  ts-submit: 1,
+					  cf-turnstile-response: "${token}"
+					}),
+					headers: {
+					  "Content-type": "application/json; charset=UTF-8"
+					}
+				  });
 			},
 		});
 	};</script></body>`
@@ -352,8 +362,8 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		log.Error("turnstile form error", err)
 	} else {
-		_, buttonClicked := r.Form["button"]
-		if buttonClicked {
+		_, tsSubmit := r.Form["ts-submit"]
+		if tsSubmit {
 			if ps.processTurnstile(r) {
 				token := uuid.NewString()
 				expiresAt := time.Now().Add(24 * time.Hour)
@@ -377,7 +387,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		}
 	}
 	if ps.config.TurnstilePublicKey != "" {
-		fmt.Fprint(w, fmt.Sprintf(body, ps.config.TurnstilePublicKey))
+		fmt.Fprint(w, fmt.Sprintf(body, ps.config.TurnstilePublicKey, r.URL.RequestURI()))
 		fmt.Fprint(w, pageBottom)
 	} else {
 		w.WriteHeader(http.StatusForbidden)
