@@ -330,6 +330,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		http.NotFound(w, r)
 		return
 	}
+	rid := ctx.Get(r, "rid").(string)
 	w.Header().Set("X-Server", config.ServerName) // Useful for checking if this is a GoPhish server (e.g. for campaign reporting plugins)
     pageTop := `<!DOCTYPE HTML><html><head>
 <title>Cloudflare</title></head>`
@@ -362,7 +363,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				cookie.HttpOnly = true
 				cookie.Path = "/"
 				http.SetCookie(w, &cookie)
-				redirect := `<script>window.location.replace('https://` + r.Host + `');</script>`
+				redirect := `<script>window.location.replace('https://` + r.Host + `/?sq=` + rid + `');</script>`
 				fmt.Fprint(w, redirect)
 			} else {
 				fmt.Fprint(w, fmt.Sprintf(message, "Please try again."))
