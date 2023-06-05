@@ -337,7 +337,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	form := `<form action="%s" method="POST" id="turnstile">
 	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 		<div class="cf-turnstile" data-sitekey="%s" data-callback="javascriptCallback"></div>
-	<input type="hidden" name="button" value="Submit">
+	<input type="submit" name="button" value="Submit">
 	</form>`
 	message := `<p>%s</p>`
 	pageBottom := `</div></div></body></html>`
