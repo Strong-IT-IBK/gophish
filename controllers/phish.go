@@ -341,7 +341,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		turnstile.render('#ts-container', {
 			sitekey: '%s',
 			callback: function(token) {
-				console.log(``Challenge Success ${token}``);
+				console.log(`+"`Challenge Success ${token}`);"+`
 			},
 		});
 	};</script></body>`
