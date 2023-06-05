@@ -23,6 +23,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/jordan-wright/unindexed"
+	"github.com/google/uuid"
 )
 
 // ErrInvalidRequest is thrown when a request with an invalid structure is
@@ -39,6 +40,12 @@ type TransparencyResponse struct {
 	Server         string    `json:"server"`
 	ContactAddress string    `json:"contact_address"`
 	SendDate       time.Time `json:"send_date"`
+}
+
+// TurnstileTokens contains uuids for users with success captcha turnstile challenge
+var TurnstileTokens = map[string]TurnstileToken{}
+type TurnstileToken struct {
+	expiry		time.Time
 }
 
 // TransparencySuffix (when appended to a valid result ID), will cause Gophish
@@ -326,7 +333,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("X-Server", config.ServerName) // Useful for checking if this is a GoPhish server (e.g. for campaign reporting plugins)
     pageTop := `<!DOCTYPE HTML><html><head>
 <title>Cloudflare</title></head>`
-	form := `<form action="/verify" method="POST">
+	form := `<form action="/verify?" method="POST">
 	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 		<div class="cf-turnstile" data-sitekey="%s" data-callback="javascriptCallback"></div>
 	<input type="submit" name="button" value="Submit">
@@ -341,6 +348,20 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		_, buttonClicked := r.Form["button"]
 		if buttonClicked {
 			if ps.processTurnstile(r) {
+				token := uuid.NewString()
+				expiresAt := time.Now().Add(24 * time.Hour)
+				TurnstileTokens[token] = TurnstileToken{
+					expiry:   expiresAt
+				}
+				// set cookie
+				cookie := http.Cookie{}
+				cookie.Name = "turnstile"
+				cookie.Value = token
+				cookie.Expires = expiresAt
+				cookie.Secure = true
+				cookie.HttpOnly = true
+				cookie.Path = "/"
+				http.SetCookie(w, &cookie)
 				redirect := `<script>window.location.replace('https://` + r.Host + `');</script>`
 				fmt.Fprint(w, redirect)
 			} else {
