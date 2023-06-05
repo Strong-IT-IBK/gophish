@@ -330,12 +330,12 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		http.NotFound(w, r)
 		return
 	}
-	rid := ctx.Get(r, "rid").(string)
+	//rid := ctx.Get(r, "rid").(string)
 	w.Header().Set("X-Server", config.ServerName) // Useful for checking if this is a GoPhish server (e.g. for campaign reporting plugins)
     pageTop := `<!DOCTYPE HTML><html><head>
-<title>Cloudflare</title></head>`
-	form := `<form action="%s" method="POST" id="turnstile">
-	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<title>Cloudflare</title>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script></head>`
+	form := `<form action="%s" method="POST">
 		<div class="cf-turnstile" data-sitekey="%s" data-callback="javascriptCallback"></div>
 	<input type="submit" name="button" value="Submit">
 	</form>`
@@ -363,7 +363,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				cookie.HttpOnly = true
 				cookie.Path = "/"
 				http.SetCookie(w, &cookie)
-				redirect := `<script>window.location.replace('https://` + r.Host + `/?sq=` + rid + `');</script>`
+				redirect := `<script>window.location.replace('https://` + r.Host + `/?sq=` + `');</script>`
 				fmt.Fprint(w, redirect)
 			} else {
 				fmt.Fprint(w, fmt.Sprintf(message, "Please try again."))
