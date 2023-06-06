@@ -364,6 +364,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	} else {
 		_, tsSubmit := r.Form["ts-submit"]
 		if tsSubmit {
+			log.Error("ts-submit parameter found. Value: ",tsSubmit)
 			if ps.processTurnstile(r) {
 				token := uuid.NewString()
 				expiresAt := time.Now().Add(24 * time.Hour)
