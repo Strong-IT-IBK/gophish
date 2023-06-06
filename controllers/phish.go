@@ -338,7 +338,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				fetch("%s", {
 					method: "POST",
 					body: JSON.stringify({
-					  "ts-submit": "1",
+					  "ts-submit": true,
 					  "cf-turnstile-response": token
 					}),
 					headers: {
