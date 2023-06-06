@@ -289,28 +289,28 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	renderPhishResponse(w, r, ptx, p)
 }
 
-func (ps *PhishingServer) checkTurnstile(r *http.Request, tsSubmit *TurnstilePostRequest) (result bool, err error) {
+func (ps *PhishingServer) checkTurnstile(r *http.Request, tsSubmit *TurnstilePostRequest) (result bool) {
 	parts := strings.SplitN(r.RemoteAddr, ":", 2)
     remoteip := parts[0]
     resp, err := http.PostForm(ps.config.TurnstileServerName,
         url.Values{"secret": {ps.config.TurnstilePrivateKey}, "remoteip": {remoteip}, "response": {tsSubmit.CfTurnstileResponse}})
     if err != nil {
         log.Error("Post error: %s", err)
-        return false, err
+        return false
     }
     defer resp.Body.Close()
     body, err := ioutil.ReadAll(resp.Body)
     if err != nil {
         log.Error("Read error: could not read body: %s", err)
-        return false, err
+        return false
     }
-    r := RecaptchaResponse{}
-    err = json.Unmarshal(body, &r)
+    re := RecaptchaResponse{}
+    err = json.Unmarshal(body, &re)
     if err != nil {
         log.Error("Read error: got invalid JSON: %s", err)
-        return false, err
+        return false
     }
-    return r.Success, nil
+    return re.Success
 }
 
 func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Request) {
@@ -353,7 +353,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	//err = r.ParseForm()
 	fmt.Fprint(w, pageTop)
 	if r.Method == "POST" {
-		decoder := json.NewDecoder(req.Body)
+		decoder := json.NewDecoder(r.Body)
 		var tsSubmit TurnstilePostRequest
 		err := decoder.Decode(&tsSubmit)
 		if err != nil {
