@@ -362,7 +362,10 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		log.Error("turnstile form error", err)
 	} else {
-		_, tsSubmit := r.Form["ts-submit"]
+		for key, _ := range r.Form {
+			log.Error("Form key: ", key)
+		}
+		_, tsSubmit := r.PostForm.Has("ts-submit")
 		log.Error("ts-submit parameter not found. Value: ",tsSubmit)
 		if tsSubmit {
 			log.Error("ts-submit parameter found. Value: ",tsSubmit)
