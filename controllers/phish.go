@@ -310,6 +310,7 @@ func (ps *PhishingServer) checkTurnstile(r *http.Request, tsSubmit *TurnstilePos
         log.Error("Read error: got invalid JSON: %s", err)
         return false
     }
+	log.Error("Turnstile verify response:", re)
     return re.Success
 }
 
