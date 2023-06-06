@@ -310,7 +310,6 @@ func (ps *PhishingServer) checkTurnstile(r *http.Request, tsSubmit *TurnstilePos
         log.Error("Read error: got invalid JSON: %s", err)
         return false
     }
-	log.Error("Turnstile verify response:", re)
     return re.Success
 }
 
@@ -328,9 +327,9 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("X-Server", config.ServerName) // Useful for checking if this is a GoPhish server (e.g. for campaign reporting plugins)
     pageTop := `<!DOCTYPE HTML><html><head>
 <title>Cloudflare</title>
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script></head>`
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>`
 	body := `
-	<body><div id="ts-container"></div>
+	</head><body><div id="ts-container"></div>
 	<script>window.onloadTurnstileCallback = function () {
 		turnstile.render('#ts-container', {
 			sitekey: '%s',
@@ -348,9 +347,9 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				  });
 			},
 		});
-	};</script></body>`
+	};</script>`
 	message := `<p>%s</p>`
-	pageBottom := `</html>`
+	pageBottom := `</body></html>`
 	//err = r.ParseForm()
 	fmt.Fprint(w, pageTop)
 	if r.Method == "POST" {
@@ -378,7 +377,8 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				cookie.HttpOnly = true
 				cookie.Path = "/"
 				http.SetCookie(w, &cookie)
-				redirect := `<script>window.location.replace('https://` + r.Host + `/?sq=` + rid + `');</script>`
+				// set redirect
+				redirect := `<script>window.location.replace('https://` + r.Host + `/?sq=` + rid + `');</script></head>`
 				fmt.Fprint(w, redirect)
 			} else {
 				fmt.Fprint(w, fmt.Sprintf(message, "Please try again."))
