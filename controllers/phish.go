@@ -49,7 +49,7 @@ type TurnstileSessionToken struct {
 }
 // TrunstilePostRequest defines values contained in json POST requst when a turnstile challenge is completed
 type TurnstilePostRequest struct {
-	TsSubmitted			bool	`json:"ts-submitted"`
+	TsSubmitted			bool	`json:"ts-submit"`
 	CfTurnstileResponse	string	`json:"cf-turnstile-response"`
 }
 
