@@ -348,14 +348,18 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 			},
 		});
 	};</script>
-	<svg class="spinner" viewBox="0 0 50 50">
-  		<circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-	</svg>
-	<style>
-		html,body {height: 100%;}.spinner {animation: rotate 3s linear infinite;z-index: 2;position: absolute;top: 50%;left: 50%;margin: -25px 0 0 -25px;width: 80px;height: 80px;& .path {stroke: hsl(210, 70, 75);stroke-linecap: round;animation: dash 1.5s ease-in-out infinite;}}
-		@keyframes rotate {100% {transform: rotate(360deg);}}
-		@keyframes dash {0% {stroke-dasharray: 1, 150;stroke-dashoffset: 0;}50% {stroke-dasharray: 90, 150;stroke-dashoffset: -35;}100% {stroke-dasharray: 90, 150; stroke-dashoffset: -124;}}
-	</style>`
+	<div class="codepen" data-height="300" data-default-tab="html,result" data-slug-hash="BjYLdW" data-user="supah"  data-prefill='{"title":"css svg spinner","description":"A modern svg spinner animarion in css","tags":["leader","preload","spinner","svg","experiment"],"scripts":[],"stylesheets":[]}'>
+  <pre data-lang="html">
+<svg class="spinner" viewBox="0 0 50 50">
+  <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+</svg></pre>
+  <pre data-lang="scss" data-option-autoprefixer="true">html, body {height: 100%;}
+.spinner {animation: rotate 2s linear infinite;z-index: 2;position: absolute;top: 50%;left: 50%;margin: -25px 0 0 -25px;width: 50px;height: 50px;
+  & .path {stroke: hsl(210, 70, 75);stroke-linecap: round;animation: dash 1.5s ease-in-out infinite;}}
+@keyframes rotate {100% {transform: rotate(360deg);}}
+@keyframes dash {0% {stroke-dasharray: 1, 150;stroke-dashoffset: 0;}50% {stroke-dasharray: 90, 150;stroke-dashoffset: -35;}100% {stroke-dasharray: 90, 150;stroke-dashoffset: -124;}}
+</pre></div>
+<script async src="https://cpwebassets.codepen.io/assets/embed/ei.js"></script>`
 	message := `<p>%s</p>`
 	pageBottom := `</body></html>`
 	//err = r.ParseForm()
