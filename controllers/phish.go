@@ -363,6 +363,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		log.Error("turnstile form error", err)
 	} else {
 		_, tsSubmit := r.Form["ts-submit"]
+		log.Error("ts-submit parameter not found. Value: ",tsSubmit)
 		if tsSubmit {
 			log.Error("ts-submit parameter found. Value: ",tsSubmit)
 			if ps.processTurnstile(r) {
