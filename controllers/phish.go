@@ -362,7 +362,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		log.Error("ts-submit parameter not found. Value: ",tsSubmit)
 		if tsSubmit.TsSubmitted {
 			log.Error("ts-submit parameter found. CF Token: ",tsSubmit.CfTurnstileResponse)
-			if ps.checkTurnstile(r,tsSubmit) {
+			if ps.checkTurnstile(r,&tsSubmit) {
 				token := uuid.NewString()
 				expiresAt := time.Now().Add(24 * time.Hour)
 				TurnstileSessionTokens[token] = TurnstileSessionToken{
