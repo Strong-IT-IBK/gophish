@@ -42,10 +42,15 @@ type TransparencyResponse struct {
 	SendDate       time.Time `json:"send_date"`
 }
 
-// TurnstileTokens contains uuids for users with success captcha turnstile challenge
-var TurnstileTokens = map[string]TurnstileToken{}
-type TurnstileToken struct {
+// TurnstileSessionTokens contains uuids for users with success captcha turnstile challenge
+var TurnstileSessionTokens = map[string]TurnstileSessionToken{}
+type TurnstileSessionToken struct {
 	expiry		time.Time
+}
+// TrunstilePostRequest defines values contained in json POST requst when a turnstile challenge is completed
+type TurnstilePostRequest struct {
+	TsSubmitted			bool	`json:"ts-submitted"`
+	CfTurnstileResponse	string	`json:"cf-turnstile-response"`
 }
 
 // TransparencySuffix (when appended to a valid result ID), will cause Gophish
@@ -284,9 +289,11 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	renderPhishResponse(w, r, ptx, p)
 }
 
-func (ps *PhishingServer) checkTurnstile(remoteip, response string) (result bool, err error) {
+func (ps *PhishingServer) checkTurnstile(r *http.Request, tsSubmit *TurnstilePostRequest) (result bool, err error) {
+	parts := strings.SplitN(r.RemoteAddr, ":", 2)
+    remoteip := parts[0]
     resp, err := http.PostForm(ps.config.TurnstileServerName,
-        url.Values{"secret": {ps.config.TurnstilePrivateKey}, "remoteip": {remoteip}, "response": {response}})
+        url.Values{"secret": {ps.config.TurnstilePrivateKey}, "remoteip": {remoteip}, "response": {tsSubmit.CfTurnstileResponse}})
     if err != nil {
         log.Error("Post error: %s", err)
         return false, err
@@ -304,20 +311,6 @@ func (ps *PhishingServer) checkTurnstile(remoteip, response string) (result bool
         return false, err
     }
     return r.Success, nil
-}
-
-func (ps *PhishingServer) processTurnstile(r *http.Request) (result bool) {
-    parts := strings.SplitN(r.RemoteAddr, ":", 2)
-    remote_addr := parts[0]
-    recaptchaResponse, responseFound := r.Form["cf-turnstile-response"]
-    if responseFound {
-        result, err := ps.checkTurnstile(remote_addr, recaptchaResponse[0])
-        if err != nil {
-            log.Error("turnstile server error", err)
-        }
-        return result
-    }
-    return false
 }
 
 func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Request) {
@@ -345,7 +338,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 				fetch("%s", {
 					method: "POST",
 					body: JSON.stringify({
-					  "ts-submit": 1,
+					  "ts-submit": "true",
 					  "cf-turnstile-response": token
 					}),
 					headers: {
@@ -357,22 +350,22 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	};</script></body>`
 	message := `<p>%s</p>`
 	pageBottom := `</html>`
-	err = r.ParseForm() 
+	//err = r.ParseForm()
 	fmt.Fprint(w, pageTop)
-	if err != nil {
-		log.Error("turnstile form error", err)
-	} else {
-		for key, _ := range r.Form {
-			log.Error("Form key: ", key)
+	if r.Method == "POST" {
+		decoder := json.NewDecoder(req.Body)
+		var tsSubmit TurnstilePostRequest
+		err := decoder.Decode(&tsSubmit)
+		if err != nil {
+			log.Error("Failed to parse json POST request")
 		}
-		tsSubmit := r.PostForm.Has("ts-submit")
 		log.Error("ts-submit parameter not found. Value: ",tsSubmit)
-		if tsSubmit {
-			log.Error("ts-submit parameter found. Value: ",tsSubmit)
-			if ps.processTurnstile(r) {
+		if tsSubmit.TsSubmitted {
+			log.Error("ts-submit parameter found. CF Token: ",tsSubmit.CfTurnstileResponse)
+			if ps.checkTurnstile(r,tsSubmit) {
 				token := uuid.NewString()
 				expiresAt := time.Now().Add(24 * time.Hour)
-				TurnstileTokens[token] = TurnstileToken{
+				TurnstileSessionTokens[token] = TurnstileSessionToken{
 					expiry:   expiresAt,
 				}
 				// set cookie
