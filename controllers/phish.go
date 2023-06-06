@@ -327,6 +327,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 	w.Header().Set("X-Server", config.ServerName) // Useful for checking if this is a GoPhish server (e.g. for campaign reporting plugins)
     pageTop := `<!DOCTYPE HTML><html><head>
 <title>Please wait...</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>`
 	body := `
 	</head><body><div id="ts-container"></div>
@@ -348,54 +349,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 			},
 		});
 	};</script>
-	<svg class="spinner" viewBox="0 0 50 50">
-  	<circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-	</svg></pre>
-  <pre data-lang="scss" data-option-autoprefixer="true">
-  html, body {
-	height: 100%;
-  }
-  
-  .spinner {
-	animation: rotate 2s linear infinite;
-	z-index: 2;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin: -25px 0 0 -25px;
-	width: 50px;
-	height: 50px;
-	
-	& .path {
-	  stroke: hsl(210, 70, 75);
-	  stroke-linecap: round;
-	  animation: dash 1.5s ease-in-out infinite;
-	}
-	
-  }
-  
-  @keyframes rotate {
-	100% {
-	  transform: rotate(360deg);
-	}
-  }
-  
-  @keyframes dash {
-	0% {
-	  stroke-dasharray: 1, 150;
-	  stroke-dashoffset: 0;
-	}
-	50% {
-	  stroke-dasharray: 90, 150;
-	  stroke-dashoffset: -35;
-	}
-	100% {
-	  stroke-dasharray: 90, 150;
-	  stroke-dashoffset: -124;
-	}
-  }  
-</pre></div>
-<script async src="https://cpwebassets.codepen.io/assets/embed/ei.js"></script>`
+	<div class="text-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>`
 	message := `<p>%s</p>`
 	pageBottom := `</body></html>`
 	//err = r.ParseForm()
