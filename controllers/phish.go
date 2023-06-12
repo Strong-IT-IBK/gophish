@@ -160,11 +160,9 @@ func (ps *PhishingServer) verifyTurnstileSession(r *http.Request) bool{
 		return false
 	}
 	sessionToken := c.Value
-	log.Error("Session token value: ",sessionToken)
 	session, exists := TurnstileSessionTokens[sessionToken]
 	if exists {
-		// token exists, now check if expiration date is not expired
-		log.Error("Session token exists! Expires at: ",session.expiry)
+		// token exists, now check if expiration date is valid
 		return session.expiry.After(time.Now())
 	}
 	return false
@@ -287,10 +285,11 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	switch {
 	case r.Method == "GET":
-		if !ps.verifyTurnstileSession(r) {
-
-			redirect := `<script>window.location.replace('https://` + r.Host + `/verify?sq=` + rid + `');</script>`
-			fmt.Fprint(w, fmt.Sprintf(redirect))
+		if config.UseTurnstile {
+			if !ps.verifyTurnstileSession(r) {
+				redirect := `<script>window.location.replace('https://` + r.Host + `/verify?sq=` + rid + `');</script>`
+				fmt.Fprint(w, fmt.Sprintf(redirect))
+			}
 		}
 		err = rs.HandleClickedLink(d)
 		if err != nil {
@@ -382,9 +381,7 @@ func (ps *PhishingServer) TurnstileHandler(w http.ResponseWriter, r *http.Reques
 		if err != nil {
 			log.Error("Failed to parse json POST request")
 		}
-		log.Error("ts-submit parameter not found. Value: ",tsSubmit)
 		if tsSubmit.TsSubmitted {
-			log.Error("ts-submit parameter found. CF Token: ",tsSubmit.CfTurnstileResponse)
 			if ps.checkTurnstile(r,&tsSubmit) {
 				token := uuid.NewString()
 				expiresAt := time.Now().Add(24 * time.Hour)

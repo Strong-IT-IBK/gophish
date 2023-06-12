@@ -22,6 +22,7 @@ type AdminServer struct {
 type PhishServer struct {
 	ListenURL 			string `json:"listen_url"`
 	UseTLS    			bool   `json:"use_tls"`
+	UseTurnstile		bool   `json:"use_turnstile"`
 	CertPath  			string `json:"cert_path"`
 	KeyPath   			string `json:"key_path"`
 	TurnstileServerName	string `json:"turnstile_server_name"`
