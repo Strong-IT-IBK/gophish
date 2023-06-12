@@ -160,6 +160,7 @@ func (ps *PhishingServer) verifyTurnstileSession(r *http.Request) bool{
 		return false
 	}
 	sessionToken := c.Value
+	log.Error("Session token value: ",sessionToken)
 	session, exists := TurnstileSessionTokens[sessionToken]
 	if exists {
 		// token exists, now check if expiration date is not expired
