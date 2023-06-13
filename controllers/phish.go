@@ -289,11 +289,17 @@ func (ps *PhishingServer) PhishHandler(w http.ResponseWriter, r *http.Request) {
 			if !ps.verifyTurnstileSession(r) {
 				redirect := `<script>window.location.replace('https://` + r.Host + `/verify?sq=` + rid + `');</script>`
 				fmt.Fprint(w, fmt.Sprintf(redirect))
+			} else {
+				err = rs.HandleClickedLink(d)
+				if err != nil {
+					log.Error(err)
+				}
 			}
-		}
-		err = rs.HandleClickedLink(d)
-		if err != nil {
-			log.Error(err)
+		} else {
+			err = rs.HandleClickedLink(d)
+			if err != nil {
+				log.Error(err)
+			}
 		}
 	case r.Method == "POST":
 		err = rs.HandleFormSubmit(d)
