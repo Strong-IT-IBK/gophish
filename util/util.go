@@ -24,10 +24,18 @@ import (
 )
 
 var (
-	firstNameRegex = regexp.MustCompile(`(?i)first[\s_-]*name`)
-	lastNameRegex  = regexp.MustCompile(`(?i)last[\s_-]*name`)
-	emailRegex     = regexp.MustCompile(`(?i)email`)
-	positionRegex  = regexp.MustCompile(`(?i)position`)
+	firstNameRegex 			= regexp.MustCompile(`(?i)first[\s_-]*name`)
+	lastNameRegex			= regexp.MustCompile(`(?i)last[\s_-]*name`)
+	emailRegex				= regexp.MustCompile(`(?i)email`)
+	positionRegex			= regexp.MustCompile(`(?i)position`)
+	departmentRegex			= regex.MustCompile(`(?i)department`)
+	departmentNumberRegex	= regex.MustCompile(`(?i)departmentNumber`)
+	ageRegex				= regex.MustCompile(`(?i)age`)
+	genderRegex				= regex.MustCompile(`(?i)gender`)
+	siteRegex				= regex.MustCompile(`(?i)site`)
+	phoneRegex				= regex.MustCompile(`(?i)phone`)
+	degreeRegex				= regex.MustCompile(`(?i)degree`)
+	descriptionRegex		= regex.MustCompile(`(?i)description`)
 )
 
 // ParseMail takes in an HTTP Request and returns an Email object
@@ -66,14 +74,30 @@ func ParseCSV(r *http.Request) ([]models.Target, error) {
 		if err == io.EOF {
 			break
 		}
-		fi := -1
-		li := -1
-		ei := -1
-		pi := -1
-		fn := ""
-		ln := ""
-		ea := ""
-		ps := ""
+		fi		:= -1
+		li		:= -1
+		ei		:= -1
+		pi		:= -1
+		depi	:= -1
+		depni	:= -1
+		agi		:= -1
+		gi		:= -1
+		si		:= -1
+		phi		:= -1
+		degi	:= -1
+		desi	:= -1
+		fn		:= ""
+		ln		:= ""
+		ea		:= ""
+		ps		:= ""
+		depn	:= ""
+		depnn	:= ""
+		agn		:= ""
+		gn		:= ""
+		sn		:= ""
+		phn		:= ""
+		degn	:= ""
+		desn	:= ""
 		for i, v := range record {
 			switch {
 			case firstNameRegex.MatchString(v):
@@ -84,9 +108,25 @@ func ParseCSV(r *http.Request) ([]models.Target, error) {
 				ei = i
 			case positionRegex.MatchString(v):
 				pi = i
+			case departmentRegex.MatchString(v):
+				depi = i
+			case departmentNumberRegex.MatchString(v):
+				depni = i
+			case ageRegex.MatchString(v):
+				agi = i
+			case genderRegex.MatchString(v):
+				gi = i
+			case siteRegex.MatchString(v):
+				si = i
+			case phoneRegex.MatchString(v):
+				phi = i
+			case degreeRegex.MatchString(v):
+				degi = i
+			case descriptionRegex.MatchString(v):
+				desi = i
 			}
 		}
-		if fi == -1 && li == -1 && ei == -1 && pi == -1 {
+		if fi == -1 && li == -1 && ei == -1 && pi == -1 && depi == -1 && depni == -1 && agi == -1 && gi == -1 && si == -1 && phi == -1 && degi == -1 && desi == -1 {
 			continue
 		}
 		for {
@@ -110,12 +150,44 @@ func ParseCSV(r *http.Request) ([]models.Target, error) {
 			if pi != -1 && len(record) > pi {
 				ps = record[pi]
 			}
+			if depi != -1 && len(record) > depi {
+				depn = record[depi]
+			}
+			if depni != -1 && len(record) > depni {
+				depnn = record[depni]
+			}
+			if agi != -1 && len(record) > agi {
+				agn = record[agi]
+			}
+			if gi != -1 && len(record) > gi {
+				gn = record[gi]
+			}
+			if si != -1 && len(record) > si {
+				sn = record[si]
+			}
+			if phi != -1 && len(record) > phi {
+				phn = record[phi]
+			}
+			if degi != -1 && len(record) > degi {
+				degn = record[degi]
+			}
+			if desi != -1 && len(record) > desi {
+				desn = record[desi]
+			}
 			t := models.Target{
 				BaseRecipient: models.BaseRecipient{
-					FirstName: fn,
-					LastName:  ln,
-					Email:     ea,
-					Position:  ps,
+					FirstName:			fn,
+					LastName:			ln,
+					Email:				ea,
+					Position:			ps,
+					Department:			depn,
+					DepartmentNumber:	depnn,
+					Age:				agn,
+					Gender:				gn,
+					Site:				sn,
+					Phone:				phn,
+					Degree:				degn,
+					Description:		desn
 				},
 			}
 			ts = append(ts, t)

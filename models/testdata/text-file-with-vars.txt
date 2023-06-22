@@ -6,6 +6,22 @@ The target's last name: {{.LastName}}
 
 The target's position: {{.Position}}
 
+The target's department: {{.Department}}
+
+The target's department number: {{.DepNumber}}
+
+The target's age: {{.Age}}
+
+The target's gender: {{.Gender}}
+
+The target's site: {{.Site}}
+
+The target's phone: {{.Phone}}
+
+The target's degree: {{.Degree}}
+
+The target's description: {{.Desc}}
+
 The target's email address: {{.Email}}
 
 The spoofed sender: {{.From}}
