@@ -195,6 +195,9 @@ func (m *MailLog) Generate(msg *gomail.Message) error {
 	if err != nil {
 		return err
 	}
+	
+	// log base url for recipient
+	log.Warn(ptx.BaseURL)
 
 	// Add the transparency headers
 	msg.SetHeader("X-Mailer", config.ServerName)
