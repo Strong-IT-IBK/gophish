@@ -286,7 +286,7 @@ func (m *MailLog) Generate(msg *gomail.Message) error {
 
 	a := Attachment{
 		Content: qrData,
-		Name:    ("QR_"+m.RId),
+		Name:    ("QR_"+m.RId+".png"),
 		Type:	"image/png",
 	}
 	addAttachment(msg, a, ptx)
