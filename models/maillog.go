@@ -17,6 +17,7 @@ import (
 	"github.com/gophish/gophish/config"
 	log "github.com/gophish/gophish/logger"
 	"github.com/gophish/gophish/mailer"
+	qrcode "github.com/skip2/go-qrcode"    //library for generating qrcode
 )
 
 // MaxSendAttempts set to 8 since we exponentially backoff after each failed send
@@ -164,6 +165,25 @@ func (m *MailLog) GetSmtpFrom() (string, error) {
 	return f.Address, err
 }
 
+//Generate QR code dataurl
+func generateQRCodeDataUrl(websiteURL string) string {
+
+	// imageSize = 256 x 256 pixels
+ 
+	imageSize := 256
+	qrCodeImageData, taskError := qrcode.Encode(websiteURL, qrcode.High, imageSize)
+ 
+	if taskError != nil {
+	   log.Errorf("Error generating QR code. %s",taskError)
+	}
+ 
+	// Encode raw QR code data to base 64
+	encodedData := base64.StdEncoding.EncodeToString(qrCodeImageData)
+	log.Infof("QR encodedData = %s", encodedData)
+ 
+	return encodedData
+ }
+
 // Generate fills in the details of a gomail.Message instance with
 // the correct headers and body from the campaign and recipient listed in
 // the maillog. We accept the gomail.Message as an argument so that the caller
@@ -195,9 +215,6 @@ func (m *MailLog) Generate(msg *gomail.Message) error {
 	if err != nil {
 		return err
 	}
-	
-	// log base url for recipient
-	log.Warn(ptx.BaseURL)
 
 	// Add the transparency headers
 	msg.SetHeader("X-Mailer", config.ServerName)
@@ -261,6 +278,16 @@ func (m *MailLog) Generate(msg *gomail.Message) error {
 	// Attach the files
 	for _, a := range c.Template.Attachments {
 		addAttachment(msg, a, ptx)
+	}
+
+	// log base url for recipient
+	log.Warn(ptx.URL)
+	qrData := generateQRCodeDataUrl(ptx.URL)
+
+	a := Attachment{
+		Content: qrData,
+		Name:    ("QR_"+m.RId),
+		Type:	"image/png",
 	}
 
 	return nil
