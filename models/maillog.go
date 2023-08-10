@@ -166,7 +166,7 @@ func (m *MailLog) GetSmtpFrom() (string, error) {
 }
 
 //Generate QR code dataurl
-func generateQRCodeDataUrl(websiteURL string) string {
+func generateQRCodeData(websiteURL string) string {
 
 	// imageSize = 256 x 256 pixels
  
@@ -282,7 +282,7 @@ func (m *MailLog) Generate(msg *gomail.Message) error {
 
 	// log base url for recipient
 	log.Warn(ptx.URL)
-	qrData := generateQRCodeDataUrl(ptx.URL)
+	qrData := generateQRCodeData(ptx.URL)
 
 	a := Attachment{
 		Content: qrData,
