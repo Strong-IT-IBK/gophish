@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-
+	"encoding/base64"
 	"github.com/gophish/gomail"
 	"github.com/gophish/gophish/config"
 	log "github.com/gophish/gophish/logger"
