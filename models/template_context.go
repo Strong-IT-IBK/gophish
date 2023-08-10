@@ -120,7 +120,6 @@ func ValidateTemplate(text string) error {
 			Position:  "Test",
 		},
 		RId: "123456",
-		QrURL: "data:image/png;base64, AAAAABBBBCCCCC12341275==",
 	}
 	ptx, err := NewPhishingTemplateContext(vc, td.BaseRecipient, td.RId)
 	if err != nil {
