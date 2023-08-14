@@ -225,7 +225,7 @@ function addTarget(firstNameInput, lastNameInput, emailInput, positionInput, dep
         escapeHtml(lastNameInput),
         email,
         escapeHtml(positionInput),
-        escapeHtml(department),
+        escapeHtml(departmentInput),
         escapeHtml(department_numberInput),
         escapeHtml(ageInput),
         escapeHtml(genderInput),
