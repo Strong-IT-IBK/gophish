@@ -6,9 +6,6 @@ import (
 	"net/url"
 	"path"
 	"text/template"
-    "encoding/base64"
-    log "github.com/gophish/gophish/logger"
-    qrcode "github.com/skip2/go-qrcode"    //library for generating qrcode
 )
 
 // TemplateContext is an interface that allows both campaigns and email
@@ -75,7 +72,6 @@ func NewPhishingTemplateContext(ctx TemplateContext, r BaseRecipient, rid string
 		Tracker:       "<img alt='' style='display: none' src='" + trackingURL.String() + "'/>",
 		From:          fn,
 		RId:           rid,
-        QrURL:         qrDataUrl,
 	}, nil
 }
 
@@ -130,23 +126,4 @@ func ValidateTemplate(text string) error {
 		return err
 	}
 	return nil
-}
-
-//Generate QR code dataurl
-func generateQRCodeDataUrl(websiteURL string) string {
-
-   // imageSize = 256 x 256 pixels
-
-   imageSize := 256
-   qrCodeImageData, taskError := qrcode.Encode(websiteURL, qrcode.High, imageSize)
-
-   if taskError != nil {
-      log.Errorf("Error generating QR code. %s",taskError)
-   }
-
-   // Encode raw QR code data to base 64
-   encodedData := base64.StdEncoding.EncodeToString(qrCodeImageData)
-   log.Infof("QR encodedData = %s", encodedData)
-
-   return "data:image/png;base64, "+encodedData
 }
