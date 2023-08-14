@@ -187,7 +187,7 @@ func ParseCSV(r *http.Request) ([]models.Target, error) {
 					Site:				sn,
 					Phone:				phn,
 					Degree:				degn,
-					Description:		desn,
+					Desc:				desn,
 				},
 			}
 			ts = append(ts, t)
