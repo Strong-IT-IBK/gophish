@@ -24,7 +24,6 @@ type PhishingTemplateContext struct {
 	TrackingURL string
 	RId         string
 	BaseURL     string
-    QrURL       string
 	BaseRecipient
 }
 
@@ -61,8 +60,6 @@ func NewPhishingTemplateContext(ctx TemplateContext, r BaseRecipient, rid string
 	trackingURL, _ := url.Parse(templateURL)
 	trackingURL.Path = path.Join(trackingURL.Path, "/track")
 	trackingURL.RawQuery = q.Encode()
-
-    qrDataUrl := generateQRCodeDataUrl(phishURL.String())
 
 	return PhishingTemplateContext{
 		BaseRecipient: r,
