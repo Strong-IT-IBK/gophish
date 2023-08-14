@@ -225,6 +225,7 @@ function addTarget(firstNameInput, lastNameInput, emailInput, positionInput, dep
         escapeHtml(lastNameInput),
         email,
         escapeHtml(positionInput),
+        '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>',
         escapeHtml(departmentInput),
         escapeHtml(department_numberInput),
         escapeHtml(ageInput),
@@ -232,8 +233,7 @@ function addTarget(firstNameInput, lastNameInput, emailInput, positionInput, dep
         escapeHtml(siteInput),
         escapeHtml(phoneInput),
         escapeHtml(degreeInput),
-        escapeHtml(descriptionInput),
-        '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>'
+        escapeHtml(descriptionInput)
     ];
 
     // Check table to see if email already exists.
