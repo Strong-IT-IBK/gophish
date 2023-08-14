@@ -28,14 +28,14 @@ var (
 	lastNameRegex			= regexp.MustCompile(`(?i)last[\s_-]*name`)
 	emailRegex				= regexp.MustCompile(`(?i)email`)
 	positionRegex			= regexp.MustCompile(`(?i)position`)
-	departmentRegex			= regex.MustCompile(`(?i)department`)
-	departmentNumberRegex	= regex.MustCompile(`(?i)departmentNumber`)
-	ageRegex				= regex.MustCompile(`(?i)age`)
-	genderRegex				= regex.MustCompile(`(?i)gender`)
-	siteRegex				= regex.MustCompile(`(?i)site`)
-	phoneRegex				= regex.MustCompile(`(?i)phone`)
-	degreeRegex				= regex.MustCompile(`(?i)degree`)
-	descriptionRegex		= regex.MustCompile(`(?i)description`)
+	departmentRegex			= regexp.MustCompile(`(?i)department`)
+	departmentNumberRegex	= regexp.MustCompile(`(?i)departmentNumber`)
+	ageRegex				= regexp.MustCompile(`(?i)age`)
+	genderRegex				= regexp.MustCompile(`(?i)gender`)
+	siteRegex				= regexp.MustCompile(`(?i)site`)
+	phoneRegex				= regexp.MustCompile(`(?i)phone`)
+	degreeRegex				= regexp.MustCompile(`(?i)degree`)
+	descriptionRegex		= regexp.MustCompile(`(?i)description`)
 )
 
 // ParseMail takes in an HTTP Request and returns an Email object
@@ -181,7 +181,7 @@ func ParseCSV(r *http.Request) ([]models.Target, error) {
 					Email:				ea,
 					Position:			ps,
 					Department:			depn,
-					DepartmentNumber:	depnn,
+					DepNumber:			depnn,
 					Age:				agn,
 					Gender:				gn,
 					Site:				sn,
