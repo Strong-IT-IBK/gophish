@@ -539,7 +539,7 @@ func PostCampaign(c *Campaign, uid int64) error {
 	// Insert all the results
 	resultMap := make(map[string]bool)
 	recipientIndex := 0
-	tx := db.Begin()
+	tx := db.Debug().Begin()
 	for _, g := range c.Groups {
 		// Insert a result for each target in the group
 		for _, t := range g.Targets {
