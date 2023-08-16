@@ -86,6 +86,7 @@ function edit(id) {
                       escapeHtml(record.last_name),
                       escapeHtml(record.email),
                       escapeHtml(record.position),
+                      '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>',
                       escapeHtml(record.department),
                       escapeHtml(record.dep_number),
                       escapeHtml(record.age),
@@ -93,8 +94,7 @@ function edit(id) {
                       escapeHtml(record.site),
                       escapeHtml(record.phone),
                       escapeHtml(record.degree),
-                      escapeHtml(record.desc),
-                      '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>'
+                      escapeHtml(record.desc)
                   ])
                 });
                 targets.DataTable().rows.add(targetRows).draw()
