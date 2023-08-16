@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/mail"
 	"time"
-	"encoding/json"
 
 	log "github.com/gophish/gophish/logger"
 	"github.com/jinzhu/gorm"
@@ -205,8 +204,7 @@ func PostGroup(g *Group) error {
 		return err
 	}
 	// Insert the group into the DB
-	tx := db.Debug().Begin()
-	log.Info("inserting group into DB... ")
+	tx := db.Begin()
 	err := tx.Save(g).Error
 	if err != nil {
 		tx.Rollback()
@@ -214,7 +212,6 @@ func PostGroup(g *Group) error {
 		return err
 	}
 	for _, t := range g.Targets {
-		log.Info("inserting target into group... ")
 		err = insertTargetIntoGroup(tx, t, g.Id)
 		if err != nil {
 			tx.Rollback()
@@ -330,10 +327,8 @@ func insertTargetIntoGroup(tx *gorm.DB, t Target, gid int64) error {
 		}).Error("Invalid email")
 		return err
 	}
-	tj, _ := json.Marshal(t)
-	log.Info("This is the target to be inserted: "+ string(tj))
 	
-	err := tx.Debug().Where(t).FirstOrCreate(&t).Error
+	err := tx.Where(t).FirstOrCreate(&t).Error
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"email": t.Email,
