@@ -205,6 +205,7 @@ func PostGroup(g *Group) error {
 	}
 	// Insert the group into the DB
 	tx := db.Begin()
+	log.Info("inserting group into DB... ")
 	err := tx.Save(g).Error
 	if err != nil {
 		tx.Rollback()
@@ -212,6 +213,7 @@ func PostGroup(g *Group) error {
 		return err
 	}
 	for _, t := range g.Targets {
+		log.Info("inserting target into group... ")
 		err = insertTargetIntoGroup(tx, t, g.Id)
 		if err != nil {
 			tx.Rollback()
