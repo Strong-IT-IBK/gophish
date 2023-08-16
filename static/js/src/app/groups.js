@@ -10,13 +10,13 @@ function save(id) {
             email: unescapeHtml(target[2]),
             position: unescapeHtml(target[3]),
             department: unescapeHtml(target[5]),
-            depnumber: unescapeHtml(target[6]),
+            dep_number: unescapeHtml(target[6]),
             age: unescapeHtml(target[7]),
             gender: unescapeHtml(target[8]),
             site: unescapeHtml(target[9]),
             phone: unescapeHtml(target[10]),
             degree: unescapeHtml(target[11]),
-            description: unescapeHtml(target[12])
+            desc: unescapeHtml(target[12])
         })
     })
     var group = {
@@ -87,13 +87,13 @@ function edit(id) {
                       escapeHtml(record.email),
                       escapeHtml(record.position),
                       escapeHtml(record.department),
-                      escapeHtml(record.depnumber),
+                      escapeHtml(record.dep_number),
                       escapeHtml(record.age),
                       escapeHtml(record.gender),
                       escapeHtml(record.site),
                       escapeHtml(record.phone),
                       escapeHtml(record.degree),
-                      escapeHtml(record.description),
+                      escapeHtml(record.desc),
                       '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>'
                   ])
                 });
@@ -128,13 +128,13 @@ function edit(id) {
                     record.email,
                     record.position,
                     record.department,
-                    record.depnumber,
+                    record.dep_number,
                     record.age,
                     record.gender,
                     record.site,
                     record.phone,
                     record.degree,
-                    record.description);
+                    record.desc);
             });
             targets.DataTable().draw();
         }

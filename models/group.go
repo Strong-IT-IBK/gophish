@@ -59,13 +59,13 @@ type BaseRecipient struct {
 	LastName	string `json:"last_name"`
 	Position	string `json:"position"`
 	Department	string `json:"department"`
-	DepNumber	string `json:"depnumber"`
+	DepNumber	string `json:"dep_number"`
 	Age			string `json:"age"`
 	Gender		string `json:"gender"`
 	Site		string `json:"site"`
 	Phone		string `json:"phone"`
 	Degree		string `json:"degree"`
-	Desc		string `json:"description"`
+	Desc		string `json:"desc"`
 }
 
 // FormatAddress returns the email address to use in the "To" header of the email
@@ -361,13 +361,13 @@ func UpdateTarget(tx *gorm.DB, target Target) error {
 		"last_name":			target.LastName,
 		"position":				target.Position,
 		"department":			target.Department,
-		"depnumber":	target.DepNumber,
+		"dep_number":			target.DepNumber,
 		"age":					target.Age,
 		"gender":				target.Gender,
 		"site":					target.Site,
 		"phone":				target.Phone,
 		"degree":				target.Degree,
-		"description":			target.Desc,
+		"desc":					target.Desc,
 	}
 	err := tx.Model(&target).Where("id = ?", target.Id).Updates(targetInfo).Error
 	if err != nil {
@@ -381,6 +381,6 @@ func UpdateTarget(tx *gorm.DB, target Target) error {
 // GetTargets performs a many-to-many select to get all the Targets for a Group
 func GetTargets(gid int64) ([]Target, error) {
 	ts := []Target{}
-	err := db.Table("targets").Select("targets.id, targets.email, targets.first_name, targets.last_name, targets.position, targets.department, targets.depnumber, targets.age, targets.gender, targets.site, targets.phone, targets.degree, targets.description").Joins("left join group_targets gt ON targets.id = gt.target_id").Where("gt.group_id=?", gid).Scan(&ts).Error
+	err := db.Table("targets").Select("targets.id, targets.email, targets.first_name, targets.last_name, targets.position, targets.department, targets.dep_number, targets.age, targets.gender, targets.site, targets.phone, targets.degree, targets.description").Joins("left join group_targets gt ON targets.id = gt.target_id").Where("gt.group_id=?", gid).Scan(&ts).Error
 	return ts, err
 }
