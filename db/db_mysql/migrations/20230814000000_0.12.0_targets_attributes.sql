@@ -2,7 +2,7 @@
 -- +goose Up
 -- SQL in section 'Up' is executed when this migration is applied
 ALTER TABLE targets ADD COLUMN "department" varchar(255);
-ALTER TABLE targets ADD COLUMN "department_number" varchar(255);
+ALTER TABLE targets ADD COLUMN "depnumber" varchar(255);
 ALTER TABLE targets ADD COLUMN "age" varchar(255);
 ALTER TABLE targets ADD COLUMN "gender" varchar(255);
 ALTER TABLE targets ADD COLUMN "site" varchar(255);

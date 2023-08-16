@@ -10,7 +10,7 @@ function save(id) {
             email: unescapeHtml(target[2]),
             position: unescapeHtml(target[3]),
             department: unescapeHtml(target[5]),
-            department_number: unescapeHtml(target[6]),
+            depnumber: unescapeHtml(target[6]),
             age: unescapeHtml(target[7]),
             gender: unescapeHtml(target[8]),
             site: unescapeHtml(target[9]),
@@ -87,7 +87,7 @@ function edit(id) {
                       escapeHtml(record.email),
                       escapeHtml(record.position),
                       escapeHtml(record.department),
-                      escapeHtml(record.department_number),
+                      escapeHtml(record.depnumber),
                       escapeHtml(record.age),
                       escapeHtml(record.gender),
                       escapeHtml(record.site),
@@ -128,7 +128,7 @@ function edit(id) {
                     record.email,
                     record.position,
                     record.department,
-                    record.department_number,
+                    record.depnumber,
                     record.age,
                     record.gender,
                     record.site,
@@ -217,7 +217,7 @@ var deleteGroup = function (id) {
     })
 }
 
-function addTarget(firstNameInput, lastNameInput, emailInput, positionInput, departmentInput, department_numberInput, ageInput, genderInput, siteInput, phoneInput, degreeInput, descriptionInput) {
+function addTarget(firstNameInput, lastNameInput, emailInput, positionInput, departmentInput, depnumberInput, ageInput, genderInput, siteInput, phoneInput, degreeInput, descriptionInput) {
     // Create new data row.
     var email = escapeHtml(emailInput).toLowerCase();
     var newRow = [
@@ -227,7 +227,7 @@ function addTarget(firstNameInput, lastNameInput, emailInput, positionInput, dep
         escapeHtml(positionInput),
         '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>',
         escapeHtml(departmentInput),
-        escapeHtml(department_numberInput),
+        escapeHtml(depnumberInput),
         escapeHtml(ageInput),
         escapeHtml(genderInput),
         escapeHtml(siteInput),

@@ -59,7 +59,7 @@ type BaseRecipient struct {
 	LastName	string `json:"last_name"`
 	Position	string `json:"position"`
 	Department	string `json:"department"`
-	DepNumber	string `json:"department_number"`
+	DepNumber	string `json:"depnumber"`
 	Age			string `json:"age"`
 	Gender		string `json:"gender"`
 	Site		string `json:"site"`
@@ -361,7 +361,7 @@ func UpdateTarget(tx *gorm.DB, target Target) error {
 		"last_name":			target.LastName,
 		"position":				target.Position,
 		"department":			target.Department,
-		"department_number":	target.DepNumber,
+		"depnumber":	target.DepNumber,
 		"age":					target.Age,
 		"gender":				target.Gender,
 		"site":					target.Site,
@@ -381,6 +381,6 @@ func UpdateTarget(tx *gorm.DB, target Target) error {
 // GetTargets performs a many-to-many select to get all the Targets for a Group
 func GetTargets(gid int64) ([]Target, error) {
 	ts := []Target{}
-	err := db.Table("targets").Select("targets.id, targets.email, targets.first_name, targets.last_name, targets.position, targets.department, targets.department_number, targets.age, targets.gender, targets.site, targets.phone, targets.degree, targets.description").Joins("left join group_targets gt ON targets.id = gt.target_id").Where("gt.group_id=?", gid).Scan(&ts).Error
+	err := db.Table("targets").Select("targets.id, targets.email, targets.first_name, targets.last_name, targets.position, targets.department, targets.depnumber, targets.age, targets.gender, targets.site, targets.phone, targets.degree, targets.description").Joins("left join group_targets gt ON targets.id = gt.target_id").Where("gt.group_id=?", gid).Scan(&ts).Error
 	return ts, err
 }
