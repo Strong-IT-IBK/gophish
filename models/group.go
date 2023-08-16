@@ -333,7 +333,7 @@ func insertTargetIntoGroup(tx *gorm.DB, t Target, gid int64) error {
 	tj, _ := json.Marshal(t)
 	log.Info("This is the target to be inserted: "+ string(tj))
 	
-	err := tx.Where(t).FirstOrCreate(&t).Error
+	err := tx.Debug().Where(t).FirstOrCreate(&t).Error
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"email": t.Email,
