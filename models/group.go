@@ -205,7 +205,7 @@ func PostGroup(g *Group) error {
 		return err
 	}
 	// Insert the group into the DB
-	tx := db.Begin()
+	tx := db.Debug().Begin()
 	log.Info("inserting group into DB... ")
 	err := tx.Save(g).Error
 	if err != nil {

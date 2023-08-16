@@ -9,14 +9,14 @@ function save(id) {
             last_name: unescapeHtml(target[1]),
             email: unescapeHtml(target[2]),
             position: unescapeHtml(target[3]),
-            department: unescapeHtml(target[4]),
-            department_number: unescapeHtml(target[5]),
-            age: unescapeHtml(target[6]),
-            gender: unescapeHtml(target[7]),
-            site: unescapeHtml(target[8]),
-            phone: unescapeHtml(target[9]),
-            degree: unescapeHtml(target[10]),
-            description: unescapeHtml(target[11])
+            department: unescapeHtml(target[5]),
+            department_number: unescapeHtml(target[6]),
+            age: unescapeHtml(target[7]),
+            gender: unescapeHtml(target[8]),
+            site: unescapeHtml(target[9]),
+            phone: unescapeHtml(target[10]),
+            degree: unescapeHtml(target[11]),
+            description: unescapeHtml(target[12])
         })
     })
     var group = {
