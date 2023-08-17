@@ -20,26 +20,66 @@ var TEMPLATE_TAGS = [{
     },
     {
         id: 5,
+        name: 'Department',
+        description: 'The recipient\'s department.'
+    },
+    {
+        id: 6,
+        name: 'DepNumber',
+        description: 'The recipient\'s department number.'
+    },
+    {
+        id: 7,
+        name: 'Age',
+        description: 'The recipient\'s age.'
+    },
+    {
+        id: 8,
+        name: 'Gender',
+        description: 'The recipient\'s gender.'
+    },
+    {
+        id: 9,
+        name: 'Site',
+        description: 'The recipient\'s site.'
+    },
+    {
+        id: 10,
+        name: 'Phone',
+        description: 'The recipient\'s phone.'
+    },
+    {
+        id: 11,
+        name: 'Degree',
+        description: 'The recipient\'s degree.'
+    },
+    {
+        id: 12,
+        name: 'Desc',
+        description: 'The recipient\'s description.'
+    },
+    {
+        id: 13,
         name: 'From',
         description: 'The address emails are sent from.'
     },
     {
-        id: 6,
+        id: 14,
         name: 'TrackingURL',
         description: 'The URL to track emails being opened.'
     },
     {
-        id: 7,
+        id: 15,
         name: 'Tracker',
         description: 'An HTML tag that adds a hidden tracking image (recommended instead of TrackingURL).'
     },
     {
-        id: 8,
+        id: 16,
         name: 'URL',
         description: 'The URL to your Gophish listener.'
     },
     {
-        id: 9,
+        id: 17,
         name: 'BaseURL',
         description: 'The base URL with the path and rid parameter stripped. Useful for making links to static files.'
     }

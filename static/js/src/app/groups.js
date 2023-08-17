@@ -8,7 +8,15 @@ function save(id) {
             first_name: unescapeHtml(target[0]),
             last_name: unescapeHtml(target[1]),
             email: unescapeHtml(target[2]),
-            position: unescapeHtml(target[3])
+            position: unescapeHtml(target[3]),
+            department: unescapeHtml(target[5]),
+            dep_number: unescapeHtml(target[6]),
+            age: unescapeHtml(target[7]),
+            gender: unescapeHtml(target[8]),
+            site: unescapeHtml(target[9]),
+            phone: unescapeHtml(target[10]),
+            degree: unescapeHtml(target[11]),
+            desc: unescapeHtml(target[12])
         })
     })
     var group = {
@@ -78,7 +86,15 @@ function edit(id) {
                       escapeHtml(record.last_name),
                       escapeHtml(record.email),
                       escapeHtml(record.position),
-                      '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>'
+                      '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>',
+                      escapeHtml(record.department),
+                      escapeHtml(record.dep_number),
+                      escapeHtml(record.age),
+                      escapeHtml(record.gender),
+                      escapeHtml(record.site),
+                      escapeHtml(record.phone),
+                      escapeHtml(record.degree),
+                      escapeHtml(record.desc)
                   ])
                 });
                 targets.DataTable().rows.add(targetRows).draw()
@@ -110,7 +126,15 @@ function edit(id) {
                     record.first_name,
                     record.last_name,
                     record.email,
-                    record.position);
+                    record.position,
+                    record.department,
+                    record.dep_number,
+                    record.age,
+                    record.gender,
+                    record.site,
+                    record.phone,
+                    record.degree,
+                    record.desc);
             });
             targets.DataTable().draw();
         }
@@ -122,7 +146,15 @@ var downloadCSVTemplate = function () {
         'First Name': 'Example',
         'Last Name': 'User',
         'Email': 'foobar@example.com',
-        'Position': 'Systems Administrator'
+        'Position': 'Systems Administrator',
+        'Department': 'Department of justice',
+        'DepNumber': '1838',
+        'Age': '41',
+        'Gender': 'Male',
+        'Site': 'Washington',
+        'Phone': '+1 5124901128',
+        'Degree': 'Phd.',
+        'Desc': 'Some serious person'
     }]
     var filename = 'group_template.csv'
     var csvString = Papa.unparse(csvScope, {})
@@ -185,7 +217,7 @@ var deleteGroup = function (id) {
     })
 }
 
-function addTarget(firstNameInput, lastNameInput, emailInput, positionInput) {
+function addTarget(firstNameInput, lastNameInput, emailInput, positionInput, departmentInput, depnumberInput, ageInput, genderInput, siteInput, phoneInput, degreeInput, descriptionInput) {
     // Create new data row.
     var email = escapeHtml(emailInput).toLowerCase();
     var newRow = [
@@ -193,7 +225,15 @@ function addTarget(firstNameInput, lastNameInput, emailInput, positionInput) {
         escapeHtml(lastNameInput),
         email,
         escapeHtml(positionInput),
-        '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>'
+        '<span style="cursor:pointer;"><i class="fa fa-trash-o"></i></span>',
+        escapeHtml(departmentInput),
+        escapeHtml(depnumberInput),
+        escapeHtml(ageInput),
+        escapeHtml(genderInput),
+        escapeHtml(siteInput),
+        escapeHtml(phoneInput),
+        escapeHtml(degreeInput),
+        escapeHtml(descriptionInput)
     ];
 
     // Check table to see if email already exists.
@@ -274,7 +314,15 @@ $(document).ready(function () {
             $("#firstName").val(),
             $("#lastName").val(),
             $("#email").val(),
-            $("#position").val());
+            $("#position").val(),
+            $("#department").val(),
+            $("#departmentNumber").val(),
+            $("#age").val(),
+            $("#gender").val(),
+            $("#site").val(),
+            $("#phone").val(),
+            $("#degree").val(),
+            $("#description").val());
         targets.DataTable().draw();
 
         // Reset user input.
