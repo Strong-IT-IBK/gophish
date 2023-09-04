@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"encoding/json"
 	"net/url"
+	"regexp"
 
 	"github.com/NYTimes/gziphandler"
 	"github.com/gophish/gophish/config"
@@ -131,8 +132,7 @@ func (ps *PhishingServer) Shutdown() error {
 // CreatePhishingRouter creates the router that handles phishing connections.
 func (ps *PhishingServer) registerRoutes() {
 	router := mux.NewRouter()
-	fileServer := http.FileServer(unindexed.Dir("./static/endpoint/"))
-	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fileServer))
+	router.HandleFunc("/static/", ps.FileHandler)
 	router.HandleFunc("/track", ps.TrackHandler)
 	router.HandleFunc("/robots.txt", ps.RobotsHandler)
 	router.HandleFunc("/{path:.*}/track", ps.TrackHandler)
@@ -166,6 +166,16 @@ func (ps *PhishingServer) verifyTurnstileSession(r *http.Request) bool{
 		return session.expiry.After(time.Now())
 	}
 	return false
+}
+
+// FileHandler serves static files
+func (ps *PhishingServer) FileHandler(w http.ResponseWriter, r *http.Request) {
+	fileServer := http.FileServer(unindexed.Dir("./static/endpoint/"))
+	var downloadFile = regexp.MustCompile("\\.ics$")
+	if downloadFile.MatchString(r.RequestURI) {
+		w.Header().Set("Content-Type", "application/octet-stream")
+	}
+	fileserver.ServerHTTP(w,r)
 }
 
 // TrackHandler tracks emails as they are opened, updating the status for the given Result
