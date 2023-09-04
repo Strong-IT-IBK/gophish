@@ -132,7 +132,8 @@ func (ps *PhishingServer) Shutdown() error {
 // CreatePhishingRouter creates the router that handles phishing connections.
 func (ps *PhishingServer) registerRoutes() {
 	router := mux.NewRouter()
-	router.HandleFunc("/static/", ps.FileHandler)
+	fileServer := http.FileServer(unindexed.Dir("./static/endpoint/"))
+	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", ps.modifyContentType(fileServer)))
 	router.HandleFunc("/track", ps.TrackHandler)
 	router.HandleFunc("/robots.txt", ps.RobotsHandler)
 	router.HandleFunc("/{path:.*}/track", ps.TrackHandler)
@@ -168,14 +169,15 @@ func (ps *PhishingServer) verifyTurnstileSession(r *http.Request) bool{
 	return false
 }
 
-// FileHandler serves static files
-func (ps *PhishingServer) FileHandler(w http.ResponseWriter, r *http.Request) {
-	fileServer := http.FileServer(unindexed.Dir("./static/endpoint/"))
-	var downloadFile = regexp.MustCompile("\\.ics$")
-	if downloadFile.MatchString(r.RequestURI) {
-		w.Header().Set("Content-Type", "application/octet-stream")
-	}
-	fileServer.ServeHTTP(w,r)
+// modifyContentType modifies content-type header to serve static files
+func (ps *PhishingServer) modifyContentType(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		var downloadFile = regexp.MustCompile("\\.ics$")
+		if downloadFile.MatchString(req.RequestURI) {
+			w.Header().Set("Content-Type", "application/octet-stream")
+		}
+		h.ServeHTTP(w, req)
+	})
 }
 
 // TrackHandler tracks emails as they are opened, updating the status for the given Result
