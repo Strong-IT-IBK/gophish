@@ -175,7 +175,7 @@ func (ps *PhishingServer) FileHandler(w http.ResponseWriter, r *http.Request) {
 	if downloadFile.MatchString(r.RequestURI) {
 		w.Header().Set("Content-Type", "application/octet-stream")
 	}
-	fileserver.ServerHTTP(w,r)
+	fileServer.ServerHTTP(w,r)
 }
 
 // TrackHandler tracks emails as they are opened, updating the status for the given Result
