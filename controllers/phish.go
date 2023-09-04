@@ -174,7 +174,7 @@ func (ps *PhishingServer) modifyContentType(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		var downloadFile = regexp.MustCompile("\\.ics$")
 		if downloadFile.MatchString(req.RequestURI) {
-			w.Header().Set("Content-Type", "application/octet-stream")
+			w.Header().Set("Content-Type", "text/calendar")
 		}
 		h.ServeHTTP(w, req)
 	})
