@@ -281,13 +281,16 @@ func (m *MailLog) Generate(msg *gomail.Message) error {
 	}
 
 	// generate QR code png image and embed attachment (reference it with img src="cid:QR_{{.RId}}.png")
-	qrData := generateQRCodeData(ptx.URL)
-	a := Attachment{
-		Content: qrData,
-		Name:    (m.RId+".png"),
-		Type:	"image/png",
+	// only if useqr is set to true
+	if c.Template.UseQr {
+		qrData := generateQRCodeData(ptx.URL)
+		a := Attachment{
+			Content: qrData,
+			Name:    (m.RId+".png"),
+			Type:	"image/png",
+		}
+		addAttachment(msg, a, ptx)
 	}
-	addAttachment(msg, a, ptx)
 
 	return nil
 }

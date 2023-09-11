@@ -34,6 +34,12 @@ function save(idx) {
         // Otherwise, remove the tracker
         template.html = template.html.replace("{{.Tracker}}</body>", "</body>")
     }
+    // If the "Add QR Code Image" checkbox is checked, set true in template
+    if ($("#use_qr_checkbox").prop("checked")) {
+        template.useqr = true;
+    } else {
+        template.useqr = false;
+    }
     template.text = $("#text_editor").val()
     // Add the attachments
     $.each($("#attachmentsTable").DataTable().rows().data(), function (i, target) {
