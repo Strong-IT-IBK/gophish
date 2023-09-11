@@ -218,6 +218,11 @@ function edit(idx) {
         } else {
             $("#use_tracker_checkbox").prop("checked", false)
         }
+        if (template.useqr) {
+            $("#use_tracker_checkbox").prop("checked", true)
+        } else {
+            $("#use_tracker_checkbox").prop("checked", false)
+        }
 
     } else {
         $("#templateModalLabel").text("New Template")
