@@ -17,6 +17,7 @@ type Template struct {
 	EnvelopeSender string       `json:"envelope_sender"`
 	Subject        string       `json:"subject"`
 	Text           string       `json:"text"`
+	UseQr          bool		    `json:"useqr"`
 	HTML           string       `json:"html" gorm:"column:html"`
 	ModifiedDate   time.Time    `json:"modified_date"`
 	Attachments    []Attachment `json:"attachments"`
