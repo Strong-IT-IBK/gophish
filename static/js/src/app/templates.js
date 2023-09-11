@@ -219,9 +219,9 @@ function edit(idx) {
             $("#use_tracker_checkbox").prop("checked", false)
         }
         if (template.useqr) {
-            $("use_qr_checkbox").prop("checked", true)
+            $("#use_qr_checkbox").prop("checked", true)
         } else {
-            $("use_qr_checkbox").prop("checked", false)
+            $("#use_qr_checkbox").prop("checked", false)
         }
 
     } else {
