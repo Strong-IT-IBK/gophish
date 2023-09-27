@@ -148,13 +148,13 @@ var downloadCSVTemplate = function () {
         'Email': 'foobar@example.com',
         'Position': 'Systems Administrator',
         'Department': 'Department of justice',
-        'DepNumber': '1838',
+        'Departmnet Number': '1838',
         'Age': '41',
         'Gender': 'Male',
         'Site': 'Washington',
         'Phone': '+1 5124901128',
         'Degree': 'Phd.',
-        'Desc': 'Some serious person'
+        'Description': 'Some serious person'
     }]
     var filename = 'group_template.csv'
     var csvString = Papa.unparse(csvScope, {})
