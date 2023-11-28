@@ -29,7 +29,7 @@ var MaxSendAttempts = 8
 var ErrMaxSendAttempts = errors.New("max send attempts exceeded")
 
 // Attachments with these file extensions have inline disposition
-var embeddedFileExtensions = []string{".jpg", ".jpeg", ".png", ".gif"}
+var embeddedFileExtensions = []string{".jpg", ".jpeg", ".png", ".gif", ".svg"}
 
 // MailLog is a struct that holds information about an email that is to be
 // sent out.
