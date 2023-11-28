@@ -367,6 +367,7 @@ func (s *ModelsSuite) TestShouldEmbedAttachment(ch *check.C) {
 	ch.Assert(shouldEmbedAttachment(".jpg"), check.Equals, true)
 	ch.Assert(shouldEmbedAttachment(".jpeg"), check.Equals, true)
 	ch.Assert(shouldEmbedAttachment(".gif"), check.Equals, true)
+	ch.Assert(shouldEmbedAttachment(".svg"), check.Equals, true)
 
 	// Some other file extensions
 	ch.Assert(shouldEmbedAttachment(".docx"), check.Equals, false)
