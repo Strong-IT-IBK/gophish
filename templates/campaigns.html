@@ -87,8 +87,8 @@
                 <div class="form-group">
                     <label for="name">Name:</label>
                     <input type="text" class="form-control" id="name" placeholder="Campaign name" autofocus>
-                    <label class="control-label" for="template">Email Template:</label>
-                    <select class="form-control" placeholder="Template Name" id="template" />
+                    <label class="control-label toggle-smtp-view" for="template">Email Template:</label>
+                    <select class="form-control toggle-smtp-view" placeholder="Template Name" id="template" />
                     <option></option>
                     </select>
                     <label class="control-label" for="page">Landing Page:</label>
@@ -99,7 +99,11 @@
                         <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right" title="Location of Gophish listener (must be reachable by targets!)"></i>
                     </label>
                     <input type="text" class="form-control" placeholder="http://192.168.1.1" id="url" />
-                    <div class="row">
+                    <div class="checkbox checkbox-primary">
+                        <input id="skip_smtp_checkbox" type="checkbox" onclick="toggleHideSMTP()">
+                        <label for="skip_smtp_checkbox">Skip email sending</label>
+                    </div>
+                    <div class="row toggle-smtp-view">
                         <div class="col-md-6">
                             <label class="control-label" for="url">Launch Date </label>
                             <input type="text" class="form-control" id="launch_date" />
@@ -111,8 +115,8 @@
                             <input type="text" class="form-control" id="send_by_date" autocomplete="random-data"/> <!--Chrome ignores autocomplete="off".-->
                         </div>
                     </div>
-                    <label class="control-label" for="profile">Sending Profile:</label>
-                    <div class="input-group">
+                    <label class="control-label toggle-smtp-view" for="profile">Sending Profile:</label>
+                    <div class="input-group toggle-smtp-view">
                         <select class="form-control" placeholder="Sending Profile" id="profile" />
                         <option></option>
                         </select>

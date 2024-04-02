@@ -52,6 +52,7 @@ function launch() {
                     launch_date: moment($("#launch_date").val(), "MMMM Do YYYY, h:mm a").utc().format(),
                     send_by_date: send_by_date || null,
                     groups: groups,
+                    skip_smtp: $("#skip_smtp_checkbox").prop("checked")
                 }
                 // Submit the campaign
                 api.campaigns.post(campaign)
@@ -112,6 +113,17 @@ function sendTestEmail() {
             <i class=\"fa fa-exclamation-circle\"></i> " + data.responseJSON.message + "</div>")
             $("#sendTestModalSubmit").html(btnHtml)
         })
+}
+
+function toggleHideSMTP() {
+    var elements = document.getElementsByClassName('toggle-smtp-view');
+    if ($("#skip_smtp_checkbox").prop("checked")){
+        for (var i=0; i < elements.length; ++i){elements[i].style.display="none";}
+        $('#template')[0].nextSibling.style.display="none";
+    } else {
+        for (var i=0; i < elements.length; ++i){elements[i].style.display="";}
+        $('#template')[0].nextSibling.style.display="";
+    }
 }
 
 function dismiss() {
@@ -283,7 +295,13 @@ function copy(idx) {
                 $("#profile").val(campaign.smtp.id.toString());
                 $("#profile").trigger("change.select2")
             }
-            $("#url").val(campaign.url)
+            $("#url").val(campaign.url);
+            if (campaign.skip_smtp){
+                $("#skip_smtp_checkbox").prop("checked", true)
+                toggleHideSMTP()
+            } else {
+                $("#skip_smtp_checkbox").prop("checked", false)
+            }
         })
         .error(function (data) {
             $("#modal\\.flashes").empty().append("<div style=\"text-align:center\" class=\"alert alert-danger\">\

@@ -21,7 +21,7 @@ type Campaign struct {
 	SendByDate    time.Time `json:"send_by_date"`
 	CompletedDate time.Time `json:"completed_date"`
 	TemplateId    int64     `json:"-"`
-	Template      Template  `json:"template"`
+	Template      Template  `json:"template,omitempty"`
 	PageId        int64     `json:"-"`
 	Page          Page      `json:"page"`
 	Status        string    `json:"status"`
@@ -29,8 +29,9 @@ type Campaign struct {
 	Groups        []Group   `json:"groups,omitempty"`
 	Events        []Event   `json:"timeline,omitempty"`
 	SMTPId        int64     `json:"-"`
-	SMTP          SMTP      `json:"smtp"`
+	SMTP          SMTP      `json:"smtp,omitempty"`
 	URL           string    `json:"url"`
+	SkipSMTP	  bool		`json:"skip_smtp"`
 }
 
 // CampaignResults is a struct representing the results from a campaign
@@ -136,11 +137,11 @@ func (c *Campaign) Validate() error {
 		return ErrCampaignNameNotSpecified
 	case len(c.Groups) == 0:
 		return ErrGroupNotSpecified
-	case c.Template.Name == "":
+	case c.Template.Name == "" && !c.SkipSMTP:
 		return ErrTemplateNotSpecified
 	case c.Page.Name == "":
 		return ErrPageNotSpecified
-	case c.SMTP.Name == "":
+	case c.SMTP.Name == "" && !c.SkipSMTP:
 		return ErrSMTPNotSpecified
 	case !c.SendByDate.IsZero() && !c.LaunchDate.IsZero() && c.SendByDate.Before(c.LaunchDate):
 		return ErrInvalidSendByDate
@@ -191,18 +192,20 @@ func (c *Campaign) getDetails() error {
 		log.Warnf("%s: events not found for campaign", err)
 		return err
 	}
-	err = db.Table("templates").Where("id=?", c.TemplateId).Find(&c.Template).Error
-	if err != nil {
-		if err != gorm.ErrRecordNotFound {
+	if !c.SkipSMTP {
+		err = db.Table("templates").Where("id=?", c.TemplateId).Find(&c.Template).Error
+		if err != nil {
+			if err != gorm.ErrRecordNotFound {
+				return err
+			}
+			c.Template = Template{Name: "[Deleted]"}
+			log.Warnf("%s: template not found for campaign", err)
+		}
+		err = db.Where("template_id=?", c.Template.Id).Find(&c.Template.Attachments).Error
+		if err != nil && err != gorm.ErrRecordNotFound {
+			log.Warn(err)
 			return err
 		}
-		c.Template = Template{Name: "[Deleted]"}
-		log.Warnf("%s: template not found for campaign", err)
-	}
-	err = db.Where("template_id=?", c.Template.Id).Find(&c.Template.Attachments).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		log.Warn(err)
-		return err
 	}
 	err = db.Table("pages").Where("id=?", c.PageId).Find(&c.Page).Error
 	if err != nil {
@@ -212,19 +215,21 @@ func (c *Campaign) getDetails() error {
 		c.Page = Page{Name: "[Deleted]"}
 		log.Warnf("%s: page not found for campaign", err)
 	}
-	err = db.Table("smtp").Where("id=?", c.SMTPId).Find(&c.SMTP).Error
-	if err != nil {
-		// Check if the SMTP was deleted
-		if err != gorm.ErrRecordNotFound {
+	if !c.SkipSMTP {
+		err = db.Table("smtp").Where("id=?", c.SMTPId).Find(&c.SMTP).Error
+		if err != nil {
+			// Check if the SMTP was deleted
+			if err != gorm.ErrRecordNotFound {
+				return err
+			}
+			c.SMTP = SMTP{Name: "[Deleted]"}
+			log.Warnf("%s: sending profile not found for campaign", err)
+		}
+		err = db.Where("smtp_id=?", c.SMTP.Id).Find(&c.SMTP.Headers).Error
+		if err != nil && err != gorm.ErrRecordNotFound {
+			log.Warn(err)
 			return err
 		}
-		c.SMTP = SMTP{Name: "[Deleted]"}
-		log.Warnf("%s: sending profile not found for campaign", err)
-	}
-	err = db.Where("smtp_id=?", c.SMTP.Id).Find(&c.SMTP.Headers).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		log.Warn(err)
-		return err
 	}
 	return nil
 }
@@ -238,6 +243,9 @@ func (c *Campaign) getBaseURL() string {
 // getFromAddress returns the Campaign's configured SMTP "From" address.
 // This is used to implement the TemplateContext interface.
 func (c *Campaign) getFromAddress() string {
+	if c.SkipSMTP{
+		return "local@localhost"
+	}
 	return c.SMTP.FromAddress
 }
 
@@ -487,19 +495,21 @@ func PostCampaign(c *Campaign, uid int64) error {
 		}
 		totalRecipients += len(c.Groups[i].Targets)
 	}
-	// Check to make sure the template exists
-	t, err := GetTemplateByName(c.Template.Name, uid)
-	if err == gorm.ErrRecordNotFound {
-		log.WithFields(logrus.Fields{
-			"template": c.Template.Name,
-		}).Error("Template does not exist")
-		return ErrTemplateNotFound
-	} else if err != nil {
-		log.Error(err)
-		return err
+	if !c.SkipSMTP {
+		// Check to make sure the template exists
+		t, err := GetTemplateByName(c.Template.Name, uid)
+		if err == gorm.ErrRecordNotFound {
+			log.WithFields(logrus.Fields{
+				"template": c.Template.Name,
+			}).Error("Template does not exist")
+			return ErrTemplateNotFound
+		} else if err != nil {
+			log.Error(err)
+			return err
+		}
+		c.Template = t
+		c.TemplateId = t.Id
 	}
-	c.Template = t
-	c.TemplateId = t.Id
 	// Check to make sure the page exists
 	p, err := GetPageByName(c.Page.Name, uid)
 	if err == gorm.ErrRecordNotFound {
@@ -513,19 +523,21 @@ func PostCampaign(c *Campaign, uid int64) error {
 	}
 	c.Page = p
 	c.PageId = p.Id
-	// Check to make sure the sending profile exists
-	s, err := GetSMTPByName(c.SMTP.Name, uid)
-	if err == gorm.ErrRecordNotFound {
-		log.WithFields(logrus.Fields{
-			"smtp": c.SMTP.Name,
-		}).Error("Sending profile does not exist")
-		return ErrSMTPNotFound
-	} else if err != nil {
-		log.Error(err)
-		return err
+	if !c.SkipSMTP {
+		// Check to make sure the sending profile exists
+		s, err := GetSMTPByName(c.SMTP.Name, uid)
+		if err == gorm.ErrRecordNotFound {
+			log.WithFields(logrus.Fields{
+				"smtp": c.SMTP.Name,
+			}).Error("Sending profile does not exist")
+			return ErrSMTPNotFound
+		} else if err != nil {
+			log.Error(err)
+			return err
+		}
+		c.SMTP = s
+		c.SMTPId = s.Id
 	}
-	c.SMTP = s
-	c.SMTPId = s.Id
 	// Insert into the DB
 	err = db.Save(c).Error
 	if err != nil {
